@@ -16,8 +16,8 @@ export default class Todo extends Component {
         <input
           className="toggle"
           type="checkbox"
-          checked={this.props.todo.get('completed') === 'true'}
-          onChange={this.props.onToggle}
+          checked={ this.props.todo.get('completed') === 'true' }
+          onChange={ this.props.onToggle }
         />
         { this.props.todo.get('text') }
 

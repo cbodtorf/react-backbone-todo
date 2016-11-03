@@ -21,27 +21,27 @@ export default class App extends Component {
 
   componentDidMount() {
     let self = this
-    this.props.todos.on('sync', this.handleSync())
+    this.props.todos.on('sync', this._handleSync())
 
-      this.props.todos.on('change', () => {
-        self.handleSync()
-      })
+    this.props.todos.on('change', () => {
+      self._handleSync()
+    })
   }
 
-  handleSync(){
+  _handleSync(){
     this.setState({
       todos: this.props.todos.models
     })
   }
 
 
-  handleSubmit(event) {
+  _handleSubmit(event) {
     event.preventDefault()
-    if(this.refs.todoInput.value === '') {
+
+    if( this.refs.todoInput.value === '' ) {
       console.log('please write something');
       return
     } else {
-      let component = this
 
       let todoObject = new TodoModel({
         text: this.refs.todoInput.value,
@@ -55,15 +55,15 @@ export default class App extends Component {
     }
   }
 
-  renderTodos() {
-    return this.props.todos.map((el) => {
+  _renderTodos() {
+    return this.props.todos.map((model) => {
 
       return (
         <Todo
-          todo={ el }
-          key={ el.cid }
-          onToggle={el.toggle.bind(el)}
-          onDestroy={el.delete.bind(el)}
+          todo={ model }
+          key={ model.cid }
+          onToggle={ model.toggle.bind(el) }
+          onDestroy={ model.delete.bind(el) }
           />)
     })
   }
@@ -75,8 +75,8 @@ export default class App extends Component {
       <div>
         <h6>Todo App</h6>
         <input type="text" className="form-control" placeholder="new todo!" ref="todoInput"/>
-        <button className="btn btn-block btn-success btn-lg" onClick={ this.handleSubmit.bind(this) }>+</button>
-        { this.renderTodos() }
+        <button className="btn btn-block btn-success btn-lg" onClick={ this._handleSubmit.bind(this) }>+</button>
+        { this._renderTodos() }
       </div>
     )
   }
