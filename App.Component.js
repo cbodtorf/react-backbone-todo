@@ -62,8 +62,8 @@ export default class App extends Component {
         <Todo
           todo={ model }
           key={ model.cid }
-          onToggle={ model.toggle.bind(el) }
-          onDestroy={ model.delete.bind(el) }
+          onToggle={ model.toggle.bind(model) }
+          onDestroy={ model.delete.bind(model) }
           />)
     })
   }
