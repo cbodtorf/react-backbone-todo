@@ -7,7 +7,7 @@ import Backbone from 'backbone'
 
 
 module.exports = Backbone.Model.extend({
-  url: 'http://tiny-tiny.herokuapp.com/collections/todos-cb/:_id',
+  url: 'http://tiny-tiny.herokuapp.com/collections/todos-cb',
 
   idAttribute: '_id',
 

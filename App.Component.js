@@ -54,7 +54,7 @@ export default class App extends Component {
 
   _handleSubmit(event) {
     event.preventDefault()
-    let newState = this.state
+    let newColl = new TodoCollection(this.state.todos.models)
 
     if( this.refs.todoInput.value === '' ) {
       console.error('please write something!!!! c@__@c)');
@@ -69,10 +69,10 @@ export default class App extends Component {
 
       this.refs.todoInput.value = ''
 
-      newState.todos.unshift(todoObject)
+      newColl.unshift(todoObject)
 
       todoObject.save();
-      this._handleSync(newState.todos)
+      this._handleSync(newColl)
     }
   }
 
