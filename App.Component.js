@@ -9,37 +9,55 @@ import Backbone from 'backbone'
 
 import Todo from './Todo.Component'
 import TodoModel from './Todo.Model'
+import TodoCollection from './Todo.Collection'
 
 
 export default class App extends Component {
   constructor(props) {
     super(props)
+    console.log('const', props )
+
     this.state = {
-      todos: props.todos.models
+      todos: props.todos
     }
+
   }
 
-  componentDidMount() {
-    let self = this
-    this.props.todos.on('sync', this._handleSync())
+  componentWillMount() {
 
-    this.props.todos.on('change', () => {
-      self._handleSync()
-    })
+    Backbone.Events.on('reRender', (todo, method) => {
+      let newColl = new TodoCollection(this.state.todos.models)
+      let newMod = newColl.get(todo)
+
+      if(method === 'DELETE') {
+
+        newColl.remove(todo.id)
+
+      } else if(method === 'PUT') {
+        newMod.set({
+          completed: !newMod.get('completed')
+        })
+        Backbone.Events.trigger('updateChecks', newMod)
+      }
+
+      this._handleSync(newColl)
+    }).bind(this)
   }
 
-  _handleSync(){
+  _handleSync(collection){
+    console.log('handle sync');
     this.setState({
-      todos: this.props.todos.models
+      todos: collection
     })
   }
 
 
   _handleSubmit(event) {
     event.preventDefault()
+    let newState = this.state
 
     if( this.refs.todoInput.value === '' ) {
-      console.log('please write something');
+      console.error('please write something!!!! c@__@c)');
       return
     } else {
 
@@ -50,13 +68,16 @@ export default class App extends Component {
       })
 
       this.refs.todoInput.value = ''
-      this.props.todos.unshift(todoObject)
+
+      newState.todos.unshift(todoObject)
+
       todoObject.save();
+      this._handleSync(newState.todos)
     }
   }
 
   _renderTodos() {
-    return this.props.todos.map((model) => {
+    return this.state.todos.map((model) => {
 
       return (
         <Todo

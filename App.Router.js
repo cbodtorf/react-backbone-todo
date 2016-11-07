@@ -15,10 +15,6 @@ module.exports = Backbone.Router.extend({
   initialize() {
     this.todoCollection = new TodoCollection()
 
-
-    Backbone.Events.on('reRender', (todo) => {
-      this.renderApp()
-    })
   },
 
   routes: {
@@ -29,6 +25,12 @@ module.exports = Backbone.Router.extend({
     let self = this
 
     this.todoCollection.fetch().then(() => {
+      self.todoCollection.forEach((model) => {
+        model.set({
+          completed: (model.get('completed') == "true")
+        })
+      })
+
       ReactDom.render(<App todos={self.todoCollection} />, document.getElementById('app'))
     })
   },

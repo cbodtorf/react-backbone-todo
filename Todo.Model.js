@@ -7,7 +7,7 @@ import Backbone from 'backbone'
 
 
 module.exports = Backbone.Model.extend({
-  url: 'http://tiny-tiny.herokuapp.com/collections/todos-cb',
+  url: 'http://tiny-tiny.herokuapp.com/collections/todos-cb/:_id',
 
   idAttribute: '_id',
 
@@ -20,23 +20,24 @@ module.exports = Backbone.Model.extend({
 
   // Toggle the `completed` state of this todo item.
   toggle() {
-    this.set({
-      completed: !JSON.parse(this.get('completed'))
+
+    Backbone.Events.on('updateChecks', function(todo){
+      console.log('checks');
+      $.ajax({
+        method: 'PUT',
+        data: todo.attributes,
+        url: `http://tiny-tiny.herokuapp.com/collections/todos-cb/${todo.id}`,
+        success(resp){
+          console.log('success', resp);
+        },
+        error(resp){
+          console.log('error', resp);
+        }
+      })
     })
 
-    let self = this
-    $.ajax({
-      method: 'PUT',
-      data: self.attributes,
-      url: `http://tiny-tiny.herokuapp.com/collections/todos-cb/${self.id}`,
-      success(resp){
-        console.log('success', resp);
-        Backbone.Events.trigger('reRender')
-      },
-      error(resp){
-        console.log('error', resp);
-      }
-    })
+    Backbone.Events.trigger('reRender', this, 'PUT')
+
   },
 
   // Delete the todo item
@@ -47,11 +48,13 @@ module.exports = Backbone.Model.extend({
       url: `http://tiny-tiny.herokuapp.com/collections/todos-cb/${self.id}`,
       success(resp){
         console.log('success', resp);
-        Backbone.Events.trigger('reRender')
       },
       error(resp){
         console.log('error', resp);
       }
+    }).then((resp)=> {
+      console.log('del', self);
+      Backbone.Events.trigger('reRender', self, 'DELETE')
     })
   }
 
